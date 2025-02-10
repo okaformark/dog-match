@@ -17,11 +17,11 @@ Welcome to the **Fetch Frontend Take-Home Exercise**! This project is a web appl
 
 ## Live Demo
 
-🚀 **[Deployed App URL](https://okaformark.github.io/fe-exercise/home)** (Replace with the actual link to the hosted site)
+🚀 **[Deployed App URL](https://okaformark.github.io/fe-exercise/home)**
 
 ## Repository
 
-📂 **[GitHub Repository](https://github.com/okaformark/fe-exercise)** (Replace with your actual GitHub repo link)
+📂 **[GitHub Repository](https://github.com/okaformark/fe-exercise)**
 
 ---
 
@@ -61,7 +61,7 @@ yarn install
 Create a `.env` file in the root directory and add the following environment variables:
 
 ```
-REACT_APP_API_BASE_URL=https://frontend-take-home-service.fetch.com
+VITE_API_BASE_URL=https://frontend-take-home-service.fetch.com
 ```
 
 ---
@@ -80,7 +80,7 @@ or
 yarn start
 ```
 
-The application should now be accessible at **[http://localhost:3000](http://localhost:3000)**
+The application should now be accessible at **[http://localhost:5173](http://localhost:5173)**
 
 ---
 
@@ -134,42 +134,15 @@ The application should now be accessible at **[http://localhost:3000](http://loc
 
 ---
 
-## Deployment
-
-To deploy the app on **Vercel** or **Netlify**:
-
-```sh
-npm run build
-```
-
-Deploy the `build/` directory to your preferred hosting provider.
-
----
-
 ## Technologies Used
 
 - **React.js** - Frontend framework
 - **React Router** - Navigation
-- **Axios** - API requests
 - **Tailwind CSS** - Styling
-- **React Context API** - State management
+- **React Query** - State management
 
 ---
 
-## Contribution
-
-Contributions are welcome! Fork the repo and submit a pull request.
-
----
-
-## License
-
-MIT License. See `LICENSE` for details.
-
----
 
 🚀 **Happy Coding!**
-
-
-
 
