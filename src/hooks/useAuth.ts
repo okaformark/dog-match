@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../utils/api';
 
 interface SignInForm {
 	name: string;
 	email: string;
 }
 
-const API_BASE_URL = 'https://frontend-take-home-service.fetch.com';
 
 export function useAuth() {
 	const navigate = useNavigate();
