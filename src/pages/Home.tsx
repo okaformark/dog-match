@@ -9,6 +9,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import { useMatch } from '../hooks/useMatch';
 import { MatchModal } from '../components/MatchModal';
+import { API_BASE_URL } from '../utils/api.ts';
 
 export default function Home() {
 	const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function Home() {
 					...(filters.location.city && { city: filters.location.city }),
 				};
 
-				const response = await fetch('/locations/search', {
+				const response = await fetch(`${API_BASE_URL}/locations/search`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
