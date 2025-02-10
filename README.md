@@ -1,50 +1,175 @@
-# React + TypeScript + Vite
+# Fetch Frontend Take-Home Exercise
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+Welcome to the **Fetch Frontend Take-Home Exercise**! This project is a web application that allows users to search for shelter dogs, filter them by breed and location, mark favorites, and find a match for adoption.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **User Authentication**: Login with name and email.
+- **Dog Search**: Browse available dogs with filtering and sorting.
+- **Pagination**: Results are paginated for better browsing.
+- **Favorite Dogs**: Users can favorite multiple dogs.
+- **Match Feature**: Generates a match from the user's favorite dogs.
+- **Location Search**: Users can filter dogs by location.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## Live Demo
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+🚀 **[Deployed App URL](#)** (Replace with the actual link to the hosted site)
+
+## Repository
+
+📂 **[GitHub Repository](#)** (Replace with your actual GitHub repo link)
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** (>= 14.x recommended)
+- **npm** or **yarn**
+- **Git**
+
+### Clone the Repository
+
+```sh
+ git clone https://github.com/your-username/fetch-frontend-exercise.git
+ cd fetch-frontend-exercise
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Install Dependencies
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Using npm:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```sh
+npm install
 ```
+
+Using yarn:
+
+```sh
+yarn install
+```
+
+### Environment Setup
+
+Create a `.env` file in the root directory and add the following environment variables:
+
+```
+REACT_APP_API_BASE_URL=https://frontend-take-home-service.fetch.com
+```
+
+---
+
+## Running the Application
+
+### Start the Development Server
+
+```sh
+npm start
+```
+
+or
+
+```sh
+yarn start
+```
+
+The application should now be accessible at **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## API Endpoints Used
+
+### **Authentication**
+
+- `POST /auth/login` - Authenticate user.
+- `POST /auth/logout` - Logout user.
+
+### **Dog Search & Matching**
+
+- `GET /dogs/breeds` - Retrieve all dog breeds.
+- `GET /dogs/search` - Search for dogs (filter by breed, zip code, age, etc.).
+- `POST /dogs` - Fetch full details of selected dogs.
+- `POST /dogs/match` - Generate a match from favorited dogs.
+
+### **Location Services**
+
+- `POST /locations/search` - Search locations by city, state, or zip code.
+- `POST /locations` - Retrieve location details by zip code.
+
+---
+
+## Usage Instructions
+
+### **1. Login Page**
+
+- Enter your name and email.
+- Click **Login** to authenticate.
+
+### **2. Search for Dogs**
+
+- Use the breed filter to refine results.
+- Sort results alphabetically (asc/desc).
+- Use pagination to navigate through the listings.
+
+### **3. Favorite Dogs**
+
+- Click the **Favorite** button on any dog card.
+- View your selected dogs in the favorites list.
+
+### **4. Generate a Match**
+
+- Click **Find My Match** to submit favorited dogs.
+- The system selects one matched dog and displays its details.
+
+### **5. Filter by Location**
+
+- Enter a city or zip code to search for nearby dogs.
+
+---
+
+## Deployment
+
+To deploy the app on **Vercel** or **Netlify**:
+
+```sh
+npm run build
+```
+
+Deploy the `build/` directory to your preferred hosting provider.
+
+---
+
+## Technologies Used
+
+- **React.js** - Frontend framework
+- **React Router** - Navigation
+- **Axios** - API requests
+- **Tailwind CSS** - Styling
+- **React Context API** - State management
+
+---
+
+## Contribution
+
+Contributions are welcome! Fork the repo and submit a pull request.
+
+---
+
+## License
+
+MIT License. See `LICENSE` for details.
+
+---
+
+🚀 **Happy Coding!**
+
+
+
+
