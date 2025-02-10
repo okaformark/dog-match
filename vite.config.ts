@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-	base: '/repository/',
+	base: '/fe-exercise/',
 	plugins: [react(), tailwindcss()],
 	server: {
 		proxy: {
