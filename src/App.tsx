@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<Router>
+			<Router basename={import.meta.env.BASE_URL}>
 				<Routes>
 					<Route path='/signin' element={<SignIn />} />
 					<Route path='/home' element={<Home />} />
