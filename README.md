@@ -17,7 +17,7 @@ Welcome to the **Fetch Frontend Take-Home Exercise**! This project is a web appl
 
 ## Live Demo
 
-🚀 **[Deployed App URL](https://okaformark.github.io/fe-exercise/signin)**
+🚀 **[Deployed App URL](https://okaformark.github.io/fe-exercise)**
 
 ## Repository
 
