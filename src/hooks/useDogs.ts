@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL } from '../utils/api';
 
 export interface Dog {
 	id: string;
@@ -14,18 +15,15 @@ export function useDogs(
 	breed?: string,
 	sortOrder: 'asc' | 'desc' = 'asc'
 ) {
-	
 	return useQuery<{ dogs: Dog[]; next: string; prev: string; total: number }>({
 		queryKey: ['dogs', searchParams, breed, sortOrder],
 		queryFn: async () => {
-			
 			const params = new URLSearchParams(searchParams);
 			if (!params.has('sort')) {
 				params.append('sort', 'breed:asc');
 			}
 
-			
-			const url = `/dogs/search?${params.toString()}`;
+			const url = `${API_BASE_URL}/dogs/search?${params.toString()}`;
 			const response = await fetch(url, {
 				credentials: 'include',
 			});
@@ -33,13 +31,13 @@ export function useDogs(
 				throw new Error('Failed to fetch dogs');
 			}
 			const searchResult = await response.json();
-			
+
 			if (!searchResult.resultIds?.length) {
 				return { dogs: [], next: '', prev: '', total: 0 };
 			}
 
 			// Fetch dog details
-			const dogsResponse = await fetch('/dogs', {
+			const dogsResponse = await fetch(`${API_BASE_URL}/dogs`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL } from '../utils/api';
 
 export interface Location {
 	zip_code: string;
@@ -39,7 +40,7 @@ export function useLocations(zipCodes: string[]) {
 		queryFn: async () => {
 			if (!zipCodes.length) return [];
 
-			const response = await fetch('/locations', {
+			const response = await fetch(`${API_BASE_URL}/locations`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export function useLocationSearch(searchParams: LocationSearchParams) {
 	return useQuery<Location[]>({
 		queryKey: ['locationSearch', searchParams],
 		queryFn: async () => {
-			const response = await fetch('/locations/search', {
+			const response = await fetch(`${API_BASE_URL}/locations/search`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

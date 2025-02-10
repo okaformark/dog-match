@@ -6,12 +6,14 @@ interface SignInForm {
 	email: string;
 }
 
+const API_BASE_URL = 'https://frontend-take-home-service.fetch.com';
+
 export function useAuth() {
 	const navigate = useNavigate();
 
 	const signInMutation = useMutation({
 		mutationFn: async (data: SignInForm) => {
-			const response = await fetch('/auth/login', {
+			const response = await fetch(`${API_BASE_URL}/auth/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -41,7 +43,7 @@ export function useAuth() {
 
 	const logoutMutation = useMutation({
 		mutationFn: async () => {
-			const response = await fetch('/auth/logout', {
+			const response = await fetch(`${API_BASE_URL}/auth/logout`, {
 				method: 'POST',
 				credentials: 'include',
 			});
