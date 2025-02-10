@@ -18,18 +18,6 @@ export default function Welcome() {
 					<h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
 						Welcome!
 					</h2>
-					<button
-						onClick={handleLogout}
-						className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
-						disabled={logoutMutation.isPending}
-					>
-						{logoutMutation.isPending ? 'Logging out...' : 'Logout'}
-					</button>
-					{logoutMutation.isError && (
-						<div className='text-red-500 text-sm text-center'>
-							Logout failed. Please try again.
-						</div>
-					)}
 				</div>
 			</div>
 		</div>

@@ -19,6 +19,12 @@ export default defineConfig({
 				secure: false,
 				xfwd: true,
 			},
+			'/locations': {
+				target: 'https://frontend-take-home-service.fetch.com',
+				changeOrigin: true,
+				secure: false,
+				xfwd: true,
+			},
 		},
 	},
 });

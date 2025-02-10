@@ -32,14 +32,6 @@ export function useAuth() {
 			// Verify the auth cookie is set
 			const cookies = document.cookie.split(';');
 			console.log(cookies);
-			// const hasAuthCookie = cookies.some((cookie) =>
-			// 	cookie.trim().startsWith('fetch-access-token=')
-			// );
-
-			// if (!hasAuthCookie) {
-			// 	throw new Error('Authentication failed - no auth cookie received');
-			// }
-
 			return response.ok;
 		},
 		onSuccess: () => {
@@ -67,19 +59,6 @@ export function useAuth() {
 			navigate('/signin');
 		},
 	});
-
-	// 	try {
-	// 		const response = await fetch(
-	// 			'https://frontend-take-home-service.fetch.com/auth/check',
-	// 			{
-	// 				credentials: 'include',
-	// 			}
-	// 		);
-	// 		return response.ok;
-	// 	} catch (error) {
-	// 		return false;
-	// 	}
-	// };
 
 	return {
 		signInMutation,

@@ -1,19 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useDogs } from '../hooks/useDogs';
+import { useState } from 'react';
+import { useDogs, Dog } from '../hooks/useDogs';
 import { useBreeds } from '../hooks/useBreeds';
 import { DogCard } from '../components/DogCard.tsx';
 import { DogSearch, SearchFilters } from '../components/DogSearch';
-import { useLocationSearch, LocationSearchParams } from '../hooks/useLocations';
+import { LocationSearchParams } from '../hooks/useLocations';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
+
+import { useMatch } from '../hooks/useMatch';
+import { MatchModal } from '../components/MatchModal';
 
 export default function Home() {
+	const navigate = useNavigate();
+	const { logoutMutation } = useAuth();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedBreed, setSelectedBreed] = useState('');
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 	const [locationParams, setLocationParams] =
 		useState<LocationSearchParams | null>(null);
+	const [favorites, setFavorites] = useState<string[]>([]);
+	const matchMutation = useMatch();
+	const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
 
-	const { data: locations } = useLocationSearch(locationParams || {});
-	const { data: breeds, isLoading: breedsLoading } = useBreeds();
+	const { data: breeds } = useBreeds();
 	const { data, isLoading, error } = useDogs(
 		searchQuery,
 		selectedBreed,
@@ -22,52 +31,150 @@ export default function Home() {
 
 	const handleSearch = async (filters: SearchFilters) => {
 		if (filters.location) {
-			setLocationParams(filters.location);
+			console.log('Location search:', filters.location);
+			try {
+				const searchBody = {
+					...(filters.location.states && { states: filters.location.states }),
+					...(filters.location.city && { city: filters.location.city }),
+				};
+
+				const response = await fetch('/locations/search', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					credentials: 'include',
+					body: JSON.stringify(searchBody),
+				});
+
+				const locations = await response.json();
+				console.log('Location results:', locations);
+
+				if (locations?.results?.length) {
+					const zipCodes = locations.results.map(
+						(result: { zip_code: string }) => result.zip_code
+					);
+					console.log('Found ZIP codes:', zipCodes);
+
+					// Create new URLSearchParams with breed sort by default
+					const params = new URLSearchParams();
+					// Send each ZIP code individually
+					zipCodes.forEach((zip: string) => params.append('zipCodes[]', zip));
+					params.append('sort', `breed:${sortOrder}`);
+
+					// Set the raw parameters
+					const searchString = params.toString();
+					console.log('Setting search params:', searchString);
+					setSearchQuery(searchString);
+
+					// Clear location params
+					setLocationParams(null);
+				}
+			} catch (error) {
+				console.error('Location search error:', error);
+			}
 			return;
 		}
 
+		// For non-location searches
 		const params = new URLSearchParams();
-		if (filters.breeds.length)
-			params.append('breeds', filters.breeds.join(','));
 
-		// Use locations from the hook
-		if (locations?.length) {
-			const zipCodes = locations.map((loc) => loc.zip_code);
-			params.append('zipCodes', zipCodes.join(','));
-		} else if (filters.zipCodes.length) {
+		if (filters.breeds.length) {
+			params.append('breeds', filters.breeds.join(','));
+		}
+
+		if (filters.zipCodes.length) {
 			params.append('zipCodes', filters.zipCodes.join(','));
 		}
 
-		if (filters.ageMin) params.append('ageMin', filters.ageMin.toString());
-		if (filters.ageMax) params.append('ageMax', filters.ageMax.toString());
-		params.append('sort', filters.sort);
-
-		setSearchQuery(`/dogs/search?${params.toString()}`);
+		// Always include sort parameter
+		params.append('sort', `breed:${sortOrder}`);
+		setSearchQuery(params.toString());
 	};
 
-	// Update search when locations change
-	useEffect(() => {
-		if (locations?.length) {
-			const params = new URLSearchParams(searchQuery.split('?')[1] || '');
-			params.set('zipCodes', locations.map((loc) => loc.zip_code).join(','));
-			setSearchQuery(`/dogs/search?${params.toString()}`);
+	const handleBreedChange = (breed: string) => {
+		setSelectedBreed(breed);
+		handleSearch({
+			breeds: breed ? [breed] : [],
+			zipCodes: [],
+			sort: `breed:${sortOrder}`,
+			location: locationParams || undefined,
+		});
+	};
+
+	const handleSortChange = (newSort: 'asc' | 'desc') => {
+		setSortOrder(newSort);
+		// Trigger new search with current filters but new sort order
+		handleSearch({
+			breeds: selectedBreed ? [selectedBreed] : [],
+			zipCodes: [],
+			sort: `breed:${newSort}`,
+			location: locationParams || undefined,
+		});
+	};
+
+	const handleLogout = () => {
+		logoutMutation.mutate(undefined, {
+			onSuccess: () => navigate('/signin'),
+		});
+	};
+
+	const toggleFavorite = (dogId: string) => {
+		setFavorites((prev) =>
+			prev.includes(dogId)
+				? prev.filter((id) => id !== dogId)
+				: [...prev, dogId]
+		);
+	};
+
+	const handleFindMatch = async () => {
+		if (favorites.length === 0) {
+			alert('Please favorite some dogs first!');
+			return;
 		}
-	}, [locations]);
+
+		try {
+			const result = await matchMutation.mutateAsync(favorites);
+			const matchedDog = data?.dogs.find((dog) => dog.id === result.match);
+			if (matchedDog) {
+				setMatchedDog(matchedDog);
+			}
+		} catch (error) {
+			console.error('Match error:', error);
+			alert('Failed to find a match. Please try again.');
+		}
+	};
+
+	const clearFavorites = () => {
+		setFavorites([]);
+		setMatchedDog(null); // Also clear any matched dog
+	};
 
 	return (
 		<div className='min-h-screen bg-gray-50 px-4 py-8'>
 			<div className='max-w-7xl mx-auto'>
-				<h1 className='text-4xl font-bold text-gray-900 mb-8'>
-					Find Your Perfect Dog
-				</h1>
+				<div className='flex justify-between items-center mb-8'>
+					<Link to='/home'>
+						<h1 className='text-4xl font-bold text-gray-900 hover:text-gray-700 transition-colors cursor-pointer'>
+							Find Your Perfect Dog
+						</h1>
+					</Link>
+					<button
+						onClick={handleLogout}
+						className='px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors'
+						disabled={logoutMutation.isPending}
+					>
+						{logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+					</button>
+				</div>
 
 				<DogSearch
 					onSearch={handleSearch}
 					breeds={breeds || []}
 					currentSort={sortOrder}
-					onSortChange={setSortOrder}
+					onSortChange={handleSortChange}
 					selectedBreed={selectedBreed}
-					onBreedChange={setSelectedBreed}
+					onBreedChange={handleBreedChange}
 				/>
 
 				{isLoading && (
@@ -82,9 +189,37 @@ export default function Home() {
 					</div>
 				)}
 
+				{favorites.length > 0 && (
+					<div className='mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-sm'>
+						<span className='text-gray-600'>
+							{favorites.length} dogs favorited
+						</span>
+						<div className='flex gap-4'>
+							<button
+								onClick={clearFavorites}
+								className='px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+							>
+								Clear Favorites
+							</button>
+							<button
+								onClick={handleFindMatch}
+								disabled={matchMutation.isPending}
+								className='px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:bg-gray-300'
+							>
+								{matchMutation.isPending ? 'Finding Match...' : 'Find My Match'}
+							</button>
+						</div>
+					</div>
+				)}
+
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
 					{data?.dogs?.map((dog) => (
-						<DogCard key={dog.id} dog={dog} />
+						<DogCard
+							key={dog.id}
+							dog={dog}
+							isFavorite={favorites.includes(dog.id)}
+							onFavoriteClick={() => toggleFavorite(dog.id)}
+						/>
 					))}
 				</div>
 
@@ -108,6 +243,10 @@ export default function Home() {
 							Next
 						</button>
 					</div>
+				)}
+
+				{matchedDog && (
+					<MatchModal dog={matchedDog} onClose={() => setMatchedDog(null)} />
 				)}
 			</div>
 		</div>
